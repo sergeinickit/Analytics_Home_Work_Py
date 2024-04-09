@@ -14,7 +14,7 @@
 4. Использование функций. Ваша программа
 не должна быть линейной
 '''
-
+import csv
 from os.path import exists
 from csv import DictReader, DictWriter
 
@@ -62,8 +62,7 @@ def get_info():
     return [first_name, last_name, phone_number]
 
 
-def create_file(file_name):
-    # with - Менеджер контекста
+def create_file(file_name): 
     with open(file_name, "w", encoding='utf-8') as data:
         f_writer = DictWriter(data, fieldnames=['Имя', 'Фамилия', 'Номер'])
         f_writer.writeheader()
@@ -92,17 +91,22 @@ def write_file(file_name, lst):
 
 file_name = 'phone.csv'
 
-def transfer_data(source: str, dest: str, num_row: int):
+
+def transfer_data(source: str, dest: str, num_row: int):   
     num_row = int(num_row)
     if not exists(source):
         print("Исходный файл не существует.")
         return
     with open(source,"r", encoding='utf-8') as data:
-        lines = data.readlines()
-        if 0 < num_row <= len(lines):
-            line_to_copy = lines[num_row - 1]
-            with open(dest,"w", encoding='utf-8') as data_2:
-                data_2.write(line_to_copy)
+        reader = csv.DictReader(data)
+        rows = list(reader)
+        if 0 < num_row < len(rows):
+            row_to_copy = rows[num_row - 1]
+            with open(dest, "w", encoding='utf-8', newline='') as data_2:
+                fieldnames = ['Имя', 'Фамилия', 'Номер']
+                writer = csv.DictWriter(data_2, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerow(row_to_copy)
         else:
             print("Некорректный номер строки")
             
